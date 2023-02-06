@@ -5,10 +5,11 @@ import FileTree from './components/FileTree'
 
 function App() {
   const [count, setCount] = useState(0)
-
+  const [selectedFile, setSelectedFile] = useState("");
+  console.log(selectedFile);
   return (
     <div className="App">
-      <FileTree files={["/home/matthew/readme.txt", "/home/matthew/src/readme.txt", "/home/idris/test.txt"]}/>
+      <FileTree selectedFile={selectedFile} setSelectedFile={setSelectedFile} files={["/home/matthew/readme.txt", "/home/matthew/src/readme.txt", "/home/idris/test.txt"]}/>
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />

@@ -6,7 +6,9 @@ import { TreeView } from '@mui/lab';
 import { unstable_useId } from '@mui/material';
 
 interface Props {
-  files: string[]
+  files: string[],
+  selectedFile: string,
+  setSelectedFile: (selectedFile:string) => void;
 }
 
 interface FilenameID {
@@ -52,8 +54,19 @@ function pathsToTree(paths: string[]): TreeNode {
 
 export default function FileTree(props: Props) {
   const fileTree: TreeNode = pathsToTree(props.files);
+  const selectFile = function(event: React.SyntheticEvent, nodeId: string) : void {
+    event.persist();
+    event.preventDefault();
+    if(fileTree.fileIds === undefined)
+      return;
+    const filename = fileTree.fileIds.find((f) => f.id.toString() === nodeId)?.filename;
+    if (filename == undefined)
+      return;
+    
+    props.setSelectedFile(filename);
+  };
   const renderTree = (nodes: TreeNode[]) => (
-    <TreeItem key={nodes[0].uuid.toString()} nodeId={nodes[0].uuid.toString()} id={nodes[0].uuid.toString()} label={nodes[0].name} >
+    <TreeItem key={nodes[0].uuid.toString()} nodeId={nodes[0].uuid.toString()} id={nodes[0].uuid.toString()} label={nodes[0].name}>
       {Array.isArray(nodes[0].children)
         ? nodes[0].children.map((node) => renderTree([node]))
         : null}
@@ -66,6 +79,7 @@ export default function FileTree(props: Props) {
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       defaultExpanded={fileTree.allIds}
+      onNodeSelect={selectFile}
       sx={{ flexGrow: 1, maxWidth: 400, overflowY: 'auto', height: 1024 }}
     >
       {fileTree.children !== undefined ? renderTree(fileTree.children) : ""}
