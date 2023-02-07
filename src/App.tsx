@@ -9,7 +9,7 @@ function App() {
   console.log(selectedFile);
   return (
     <div className="App">
-      <FileTree selectedFile={selectedFile} setSelectedFile={setSelectedFile} files={["/home/matthew/readme.txt", "/home/matthew/src/readme.txt", "/home/idris/test.txt"]}/>
+      <FileTree selectedFile={selectedFile} setSelectedFile={setSelectedFile} files={["/home/matthew/readme.txt", "/home/matthew/test.txt", "/home/matthew/src/readme.txt", "/home/idris/test.txt"]} />
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />

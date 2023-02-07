@@ -1,14 +1,14 @@
 import * as React from 'react';
+import { useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem from '@mui/lab/TreeItem';
 import { TreeView } from '@mui/lab';
-import { unstable_useId } from '@mui/material';
 
 interface Props {
   files: string[],
   selectedFile: string,
-  setSelectedFile: (selectedFile:string) => void;
+  setSelectedFile: (selectedFile: string) => void;
 }
 
 interface FilenameID {
@@ -53,36 +53,38 @@ function pathsToTree(paths: string[]): TreeNode {
 
 
 export default function FileTree(props: Props) {
-  const fileTree: TreeNode = pathsToTree(props.files);
-  const selectFile = function(event: React.SyntheticEvent, nodeId: string) : void {
-    event.persist();
-    event.preventDefault();
-    if(fileTree.fileIds === undefined)
-      return;
-    const filename = fileTree.fileIds.find((f) => f.id.toString() === nodeId)?.filename;
-    if (filename == undefined)
-      return;
-    
-    props.setSelectedFile(filename);
-  };
+  const [fileTree] = useState<TreeNode>(pathsToTree(props.files));
+
   const renderTree = (nodes: TreeNode[]) => (
-    <TreeItem key={nodes[0].uuid.toString()} nodeId={nodes[0].uuid.toString()} id={nodes[0].uuid.toString()} label={nodes[0].name}>
+    <TreeItem key={nodes[0].uuid.toString()} nodeId={nodes[0].uuid.toString()} id={nodes[0].uuid.toString()} label={nodes[0].name} >
       {Array.isArray(nodes[0].children)
         ? nodes[0].children.map((node) => renderTree([node]))
         : null}
     </TreeItem>
   );
 
-  return (
+  const treeItems = renderTree(Array.isArray(fileTree.children) ? fileTree.children : []);
+
+  const selectFile = function (event: React.SyntheticEvent, nodeId: string): void {
+    if (fileTree.fileIds === undefined)
+      return;
+    const filename = fileTree.fileIds.find((f) => f.id.toString() === nodeId)?.filename;
+    if (filename == undefined)
+      return;
+    props.setSelectedFile(filename);
+  };
+
+  const treeView = (
     <TreeView
       aria-label="multi-select"
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
-      defaultExpanded={fileTree.allIds}
-      onNodeSelect={selectFile}
+      defaultExpanded={fileTree?.allIds}
+      onNodeFocus={selectFile}
       sx={{ flexGrow: 1, maxWidth: 400, overflowY: 'auto', height: 1024 }}
     >
-      {fileTree.children !== undefined ? renderTree(fileTree.children) : ""}
+      {treeItems}
     </TreeView>
   );
+  return treeView;
 }
