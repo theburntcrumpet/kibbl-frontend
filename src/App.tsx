@@ -2,14 +2,22 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 import FileTree from './components/FileTree'
+import Markdown from './components/Markdown'
+import SearchBox from './components/SearchBox'
 
 function App() {
   const [count, setCount] = useState(0)
   const [selectedFile, setSelectedFile] = useState("");
+  const [filePaths, setFilePaths] = useState<string[]>([]);
+
+
   console.log(selectedFile);
+  console.log(filePaths);
   return (
     <div className="App">
-      <FileTree selectedFile={selectedFile} setSelectedFile={setSelectedFile} files={["/home/matthew/readme.txt", "/home/matthew/test.txt", "/home/matthew/src/readme.txt", "/home/idris/test.txt"]} />
+      <SearchBox setFilePaths={setFilePaths}/>
+      <FileTree selectedFile={selectedFile} setSelectedFile={setSelectedFile} files={filePaths} />
+      <Markdown  path={selectedFile} />
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />

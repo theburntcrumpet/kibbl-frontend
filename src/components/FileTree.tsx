@@ -26,7 +26,8 @@ interface TreeNode {
 }
 
 function pathsToTree(paths: string[]): TreeNode {
-  const root: TreeNode = { name: '/', children: [], fullPath: "/", allIds: [], uuid: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER), fileIds: [] };
+  const rootUuid = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+  const root: TreeNode = { name: '/', children: [], fullPath: "/", allIds: [rootUuid.toString()], uuid: rootUuid, fileIds: [] };
   paths.forEach(path => {
     const parts = path.split('/').filter(part => part !== '');
     let node: TreeNode = root;
@@ -53,17 +54,22 @@ function pathsToTree(paths: string[]): TreeNode {
 
 
 export default function FileTree(props: Props) {
+  if (props.files.length == 0){
+    props.setSelectedFile("");
+    return <div></div>
+  }
   const [fileTree] = useState<TreeNode>(pathsToTree(props.files));
 
   const renderTree = (nodes: TreeNode[]) => (
-    <TreeItem key={nodes[0].uuid.toString()} nodeId={nodes[0].uuid.toString()} id={nodes[0].uuid.toString()} label={nodes[0].name} >
-      {Array.isArray(nodes[0].children)
-        ? nodes[0].children.map((node) => renderTree([node]))
-        : null}
-    </TreeItem>
-  );
+      <TreeItem key={nodes[0].uuid.toString()} nodeId={nodes[0].uuid.toString()} id={nodes[0].uuid.toString()} label={nodes[0].name} >
+        {Array.isArray(nodes[0].children)
+          ? nodes[0].children.map((node) => renderTree([node]))
+          : null}
+      </TreeItem>
+    );
+  
 
-  const treeItems = renderTree(Array.isArray(fileTree.children) ? fileTree.children : []);
+  const treeItems = renderTree(Array.isArray(fileTree.children) ? [fileTree] : []);
 
   const selectFile = function (event: React.SyntheticEvent, nodeId: string): void {
     if (fileTree.fileIds === undefined)
