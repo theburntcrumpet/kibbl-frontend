@@ -60,16 +60,16 @@ export default function FileTree(props: Props) {
     </TreeItem>
   );
   const fileTree = pathsToTree(props.files);
-  const expandedNodes= fileTree.allIds as string[];
+  const expandedNodes = fileTree.allIds as string[];
   const treeItems = (fileTree.children as TreeNode[]).map(node => renderTree([node]));
-  
+
 
   const selectFile = function (event: React.SyntheticEvent, nodeId: string): void {
     const indexInExpanded = expandedNodes.indexOf(nodeId);
     if (indexInExpanded === -1) {
       expandedNodes.push(nodeId);
     } else {
-      expandedNodes.splice(indexInExpanded,1);
+      expandedNodes.splice(indexInExpanded, 1);
     }
 
     if (fileTree.fileIds === undefined)
@@ -80,19 +80,19 @@ export default function FileTree(props: Props) {
     props.setSelectedFile(filename);
   };
 
-  const test =  (
-      <TreeView
+  const test = (
+    <TreeView
       aria-label="multi-select"
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       expanded={expandedNodes}
       onNodeSelect={selectFile}
-      sx={{ flexGrow: 1, overflowX: 'auto', overflowY: 'scroll', height:"91vh", maxWidth:"100%", padding: "1em"}}
+      sx={{ flexGrow: 1, overflowX: 'auto', overflowY: 'scroll', height: "90vh", maxWidth: "100%", padding: "1em" }}
     >
       {treeItems}
     </TreeView>
 
-    
+
   )
 
   return test;

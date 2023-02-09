@@ -3,19 +3,41 @@ import axios from "axios";
 import { useEffect, useState } from 'react';
 
 interface Props {
-    setFilePaths: (filepaths:string[]) => void,
+    setFilePaths: (filepaths: string[]) => void,
     searchTerm: string,
-    setSearchTerm: (searchTerm:string) => void
+    setSearchTerm: (searchTerm: string) => void
 }
 
-export default function SearchBox(props:Props) {
+export default function SearchBox(props: Props) {
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(props.searchTerm);
 
     useEffect(() => {
-        axios.get(`http://localhost:8000/api/v1/notes/`, {params: { q: props.searchTerm }}).then(
+        let timerId = setTimeout(() => {
+            setDebouncedSearchTerm(props.searchTerm);
+        }, 500);
+
+        return () => {
+            clearTimeout(timerId);
+        };
+    }, [props.searchTerm]);
+
+    useEffect(() => {
+        axios.get(`http://localhost:8000/api/v1/notes/`, { params: { q: debouncedSearchTerm } }).then(
             (response) => {
                 props.setFilePaths(response.data);
             }
         ).catch(e => console.log(e));
-    }, [props.searchTerm]);
-    return (<TextField id="outlined-basic" label="Search" variant="outlined" fullWidth value={props.searchTerm} onChange={e=>{props.setSearchTerm(e.target.value)}}/>);
+    }, [debouncedSearchTerm]);
+
+    return (
+        <TextField
+            id="outlined-basic"
+            label="Search"
+            variant="outlined"
+            fullWidth
+            margin="dense"
+            value={props.searchTerm}
+            onChange={e => { props.setSearchTerm(e.target.value) }}
+        />
+    );
 }

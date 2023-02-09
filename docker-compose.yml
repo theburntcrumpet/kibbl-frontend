@@ -5,4 +5,10 @@ services:
     ports:
       - "8000:5000"
     volumes:
-      - ./test-notes:/app/notes
+      - .:/app/notes
+  frontend:
+    image: funbuns/kibbl-frontend:latest
+    ports:
+      - "8001:5173"
+    volumes:
+      - .:/app/notes
