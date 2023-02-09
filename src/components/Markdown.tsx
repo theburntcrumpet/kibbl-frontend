@@ -1,3 +1,4 @@
+import { Card, CardContent } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
@@ -10,6 +11,9 @@ interface Props {
 export default function Markdown(props:Props) {
     const [markdownData, setMarkdownData] = useState("");
     useEffect(() => {
+        if (props.path === ""){
+            return;
+        }
         axios.get(`http://localhost:8000/api/v1/notes/data`, {params: { f: props.path }})
         .then((response) => {
             setMarkdownData(response.data);
@@ -19,8 +23,14 @@ export default function Markdown(props:Props) {
         return (<div />);
     }
     return(
-        <ReactMarkdown>
-            {markdownData}
-        </ReactMarkdown>
+        <Card sx={{minHeight:"92vh"}} raised>
+            <CardContent>
+            <ReactMarkdown>
+                {markdownData}
+            </ReactMarkdown>
+            </CardContent>
+                
+        </Card>
+        
     );
 }
